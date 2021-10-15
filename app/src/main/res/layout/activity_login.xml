@@ -32,6 +32,19 @@
         android:layout_marginEnd="20dp"
         android:text="Login" />
 
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnLogin"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Sign Up" />
+
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="wrap_content"

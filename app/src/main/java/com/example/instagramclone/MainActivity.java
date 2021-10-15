@@ -4,10 +4,10 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +16,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,14 +38,35 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainAcitivity";
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     private EditText etDescription;
     private Button btnCaptureImage;
     private ImageView ivPostImage;
     private Button btnSubmit;
     private File photoFile;
     private String photoFileName = "photo.jpg";
-    ActivityResultLauncher<Intent> activityResultLauncher;
+
+    ActivityResultLauncher<Intent> cameraLauncher;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menuLogOut:
+                ParseUser.logOut();
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         ivPostImage = findViewById(R.id.ivPostImage);
         btnSubmit = findViewById(R.id.btnSubmit);
 
-        activityResultLauncher = registerForActivityResult(
+        // get image and render image
+        cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -101,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         if (getIntent().resolveActivity(getPackageManager()) != null) {
-            activityResultLauncher.launch(intent);
+            cameraLauncher.launch(intent);
         } else {
             Toast.makeText(MainActivity.this, "There is no app that supports this action",
                 Toast.LENGTH_SHORT).show();
@@ -141,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Post save was successful");
                 etDescription.setText("");
                 ivPostImage.setImageResource(0);
-
             }
         });
     }
